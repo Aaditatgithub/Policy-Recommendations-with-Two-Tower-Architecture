@@ -1,18 +1,52 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { customers } from '../data/customers';
-import { policies } from '../data/policies';
-import PolicyCard from '../components/PolicyCard';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import PolicyCard from "../components/PolicyCard";
+import { customers } from "../data/customers";
 
 const CustomerProfile: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const customer = customers.find(c => c.id === id);
-  const customerPolicies = policies[id || ''] || [];
+  const [policies, setPolicies] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!customer) {
+  const customer = customers.find((customer) => customer.id === id);
+  const customerName = customer ? customer.name : "Unknown Customer";
+
+  useEffect(() => {
+    const fetchPolicies = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `http://localhost:5000/recommend_policies?customer_id=${id}`
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch policies");
+        const data = await response.json();
+        setPolicies(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchPolicies();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-8 flex justify-center items-center">
+        <span className="text-gray-600 text-lg">Loading...</span>
+      </div>
+    );
+  }
+
+  if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-8">
-        <div className="text-center text-gray-600">Customer not found</div>
+        <div className="text-center text-gray-600">{error}</div>
       </div>
     );
   }
@@ -22,26 +56,23 @@ const CustomerProfile: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Profile for {customer.name}
+            Policies for {customerName}
           </h1>
-          <div className="flex gap-4 text-gray-600">
-            <span>Age: {customer.age}</span>
-            <span>•</span>
-            <span>Income: {customer.income}</span>
-            <span>•</span>
-            <span>Family Size: {customer.familySize}</span>
-          </div>
         </header>
 
         <section>
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">
             Recommended Policies
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {customerPolicies.map((policy) => (
-              <PolicyCard key={policy.id} policy={policy} />
-            ))}
-          </div>
+          {policies.length === 0 ? (
+            <p className="text-gray-500">No policies available</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {policies.map((policy) => (
+                <PolicyCard key={policy.policy_id} policy={policy} />
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </div>
