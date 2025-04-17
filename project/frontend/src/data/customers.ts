@@ -14,7 +14,7 @@ export interface Customer {
 export const customers: Customer[] = [
   {
     id: '1',
-    name: 'Arjun Iyer',
+    name: 'Aaditya Patil',
     age: 35,
     income: '15-20L',
     familySize: 4,
@@ -26,7 +26,7 @@ export const customers: Customer[] = [
   },
   {
     id: '2',
-    name: 'Aarav Mehta',
+    name: 'Omkar Lolage',
     age: 28,
     income: '10-15L',
     familySize: 2,
@@ -38,7 +38,7 @@ export const customers: Customer[] = [
   },
   {
     id: '3',
-    name: 'Rajiv Khanna',
+    name: 'Swaraj Phand',
     age: 42,
     income: '25-30L',
     familySize: 5,
@@ -50,7 +50,7 @@ export const customers: Customer[] = [
   },
   {
     id: '4',
-    name: 'Ananya Reddy',
+    name: 'Aditya Deore',
     age: 31,
     income: '20-25L',
     familySize: 3,
@@ -62,7 +62,7 @@ export const customers: Customer[] = [
   },
   {
     id: '5',
-    name: 'Karan Singh',
+    name: 'Aditya Lad',
     age: 45,
     income: '30-40L',
     familySize: 6,
@@ -74,7 +74,7 @@ export const customers: Customer[] = [
   },
   {
     id: '6',
-    name: 'Neha Joshi',
+    name: 'Anshu Parihar',
     age: 29,
     income: '12-18L',
     familySize: 2,
