@@ -6,6 +6,11 @@ import CustomerCard from './customer/CustomerCard';
 const CustomerDropdown: React.FC = () => {
   const navigate = useNavigate();
 
+  const handleSelect = (customerId: string) => {
+    localStorage.setItem('customerId', customerId); // ✅ Save to localStorage
+    navigate(`/customer/${customerId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sbi-light-purple to-white p-8">
       <div className="max-w-4xl mx-auto">
@@ -16,7 +21,7 @@ const CustomerDropdown: React.FC = () => {
           {customers.map((customer) => (
             <button
               key={customer.id}
-              onClick={() => navigate(`/customer/${customer.id}`)}
+              onClick={() => handleSelect(customer.id)}
               className="w-full text-left transition-transform duration-200 hover:scale-105"
             >
               <CustomerCard customer={customer} />

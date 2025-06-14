@@ -1,6 +1,4 @@
-// src/components/PolicyCard.tsx
 import React, { useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import { trackPolicyInteraction, trackElementView } from '../utils/tracking';
 
 interface Policy {
@@ -14,28 +12,33 @@ interface Policy {
   keywords?: string;
   risk_category?: string;
   customer_target_group?: string;
-  // Add CSV column names exactly as they appear
   'premium_amount (INR)'?: number | string;
   'sum_assured (INR)'?: number | string;
+  is_promoted?: boolean;
+  promotion_tag?: string;
   [key: string]: any;
 }
 
 interface PolicyCardProps {
   policy: Policy;
+  customerId?: string | null;
+  onAddToCart: (policyId: string) => void;
+  onCompare: (policyId: string) => void;
   interactionContext?: string;
   className?: string;
 }
 
 const PolicyCard: React.FC<PolicyCardProps> = ({ 
   policy, 
+  customerId,
+  onAddToCart,
+  onCompare,
   interactionContext = 'browse',
   className = ''
 }) => {
-  const { id: customerId } = useParams<{ id: string }>();
   const cardRef = useRef<HTMLDivElement>(null);
   const cardId = `policy-card-${policy?.policy_id || 'unknown'}`;
 
-  // Get values from either direct or CSV-style properties
   const getPolicyValue = (key: string) => {
     return policy[key] || policy[`${key} (INR)`] || null;
   };
@@ -80,7 +83,36 @@ const PolicyCard: React.FC<PolicyCardProps> = ({
     );
   };
 
-  // Get actual values from either property naming convention
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!policy?.policy_id) return;
+    
+    trackPolicyInteraction(
+      customerId || 'guest',
+      policy.policy_id,
+      'cart_add',
+      undefined,
+      { context: interactionContext }
+    );
+    
+    onAddToCart(policy.policy_id);
+  };
+
+  const handleCompare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!policy?.policy_id) return;
+    
+    trackPolicyInteraction(
+      customerId || 'guest',
+      policy.policy_id,
+      'compare',
+      undefined,
+      { context: interactionContext }
+    );
+    
+    onCompare(policy.policy_id);
+  };
+
   const premiumAmount = getPolicyValue('premium_amount');
   const sumAssured = getPolicyValue('sum_assured');
   const duration = policy.policy_duration_years;
@@ -93,9 +125,23 @@ const PolicyCard: React.FC<PolicyCardProps> = ({
     <div 
       ref={cardRef}
       id={cardId}
-      className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all cursor-pointer ${className}`}
+      className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all cursor-pointer relative ${className}`}
       onClick={handleClick}
     >
+      {/* Promotion Badge */}
+      {policy.is_promoted && (
+        <div className="absolute top-0 right-0 z-10">
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-bl-lg rounded-tr-lg shadow-lg">
+            <div className="flex items-center space-x-1">
+              <span className="text-xs font-bold">⭐</span>
+              <span className="text-xs font-semibold uppercase tracking-wide">
+                {policy.promotion_tag || 'Featured'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={`px-6 py-3 ${
         policy.risk_category === 'High' ? 'bg-red-100 text-red-800' :
         policy.risk_category === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -143,17 +189,11 @@ const PolicyCard: React.FC<PolicyCardProps> = ({
               {formatValue(duration, false)}
             </p>
           </div>
-          {/* <div>
-            <p className="text-xs text-gray-500">Type</p>
-            <p className="font-bold text-lg">
-              {policy.policy_type || '--'}
-            </p>
-          </div> */}
         </div>
 
         {getKeywords().length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
-            {getKeywords().map((keyword, index) => (
+            {getKeywords().slice(0, 3).map((keyword, index) => (
               <span key={index} className="text-xs bg-violet-100 text-violet-800 px-2 py-1 rounded-full">
                 {keyword}
               </span>
@@ -163,32 +203,18 @@ const PolicyCard: React.FC<PolicyCardProps> = ({
 
         <div className="flex space-x-3 pt-2 border-t border-gray-100">
           <button 
-            className="flex-1 px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              trackPolicyInteraction(
-                customerId || 'guest',
-                policy.policy_id,
-                'cart_add',
-                undefined,
-                { context: interactionContext }
-              );
-            }}
+            className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+              policy.is_promoted 
+                ? 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600' 
+                : 'bg-violet-600 text-white hover:bg-violet-700'
+            }`}
+            onClick={handleAddToCart}
           >
-            Add to Cart
+            {policy.is_promoted ? '⭐ Add Featured' : 'Add to Cart'}
           </button>
           <button 
             className="px-4 py-2 border border-violet-600 text-violet-600 rounded-lg hover:bg-violet-50 transition-colors"
-            onClick={(e) => {
-              e.stopPropagation();
-              trackPolicyInteraction(
-                customerId || 'guest',
-                policy.policy_id,
-                'compare',
-                undefined,
-                { context: interactionContext }
-              );
-            }}
+            onClick={handleCompare}
           >
             Compare
           </button>

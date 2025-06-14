@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users2, LineChart, FileText } from 'lucide-react';
+import { Users2, LineChart, FileText, Target } from 'lucide-react';
 import WelcomeCard from '../components/WelcomeCard';
 import WelcomeHeader from '../components/welcome/WelcomeHeader';
 
@@ -9,7 +9,7 @@ const Welcome: React.FC = () => {
       <div className="container mx-auto px-4 py-12">
         <WelcomeHeader />
 
-        <div className="flex flex-wrap justify-center gap-8 max-w-5xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
           <WelcomeCard
             title="Customer Experience"
             description="View personalized policy recommendations tailored to individual users"
@@ -25,11 +25,18 @@ const Welcome: React.FC = () => {
             bgColor="bg-sbi-pink"
           />
           <WelcomeCard
-            title="SBI Team Dashboard"
+            title="Analytics Dashboard"
             description="Explore insights, performance metrics, and customer behavior analytics"
             icon={<LineChart size={32} className="text-white" />}
             to="/dashboard"
             bgColor="bg-sbi-blue"
+          />
+          <WelcomeCard
+            title="Policy Promotions"
+            description="Create targeted campaigns and manage policy promotions with advanced filters"
+            icon={<Target size={32} className="text-white" />}
+            to="/promotion"
+            bgColor="bg-gradient-to-r from-violet-600 to-purple-600"
           />
         </div>
 

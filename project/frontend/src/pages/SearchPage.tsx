@@ -1,9 +1,9 @@
-// src/pages/SearchPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import PolicyCard from '../components/PolicyCard';
 import Navbar from '../components/NavBar';
-import { trackEvent, trackPolicyInteraction } from '../utils/tracking';
+import { trackEvent } from '../utils/tracking';
+import { addToCart } from '../services/cartService';
 
 const SearchPage: React.FC = () => {
   const location = useLocation();
@@ -14,7 +14,6 @@ const SearchPage: React.FC = () => {
   const [customerId, setCustomerId] = useState<string | null>(null);
 
   useEffect(() => {
-    // In a real app, you'd get the customer ID from auth context or similar
     const storedCustomerId = localStorage.getItem('customerId');
     setCustomerId(storedCustomerId);
   }, []);
@@ -29,10 +28,10 @@ const SearchPage: React.FC = () => {
       try {
         setLoading(true);
         trackEvent('search_initiated', { query });
-        
+
         const response = await fetch(`http://localhost:5000/search_policies?q=${encodeURIComponent(query)}`);
         const data = await response.json();
-        
+
         setPolicies(data);
         trackEvent('search_completed', {
           query,
@@ -56,15 +55,29 @@ const SearchPage: React.FC = () => {
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
+  const handleAddToCart = async (policyId: string) => {
+    try {
+      await addToCart(customerId || 'guest', policyId);
+      alert('Policy added to cart successfully!');
+    } catch (error) {
+      console.error('Add to cart failed:', error);
+      alert('Failed to add policy to cart.');
+    }
+  };
+
+  const handleCompare = (policyId: string) => {
+    navigate(`/compare?policy_id=${policyId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <Navbar onSearch={handleSearch} initialQuery={query} />
-      
+
       <div className="p-8 max-w-7xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">
           Search Results for "{query}"
         </h1>
-        
+
         {loading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-600"></div>
@@ -78,6 +91,8 @@ const SearchPage: React.FC = () => {
                 key={policy.policy_id} 
                 policy={policy}
                 customerId={customerId}
+                onAddToCart={handleAddToCart}
+                onCompare={handleCompare}
                 interactionContext="search"
               />
             ))}

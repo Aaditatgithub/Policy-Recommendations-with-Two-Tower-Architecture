@@ -1,0 +1,128 @@
+import React from 'react';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
+
+interface AreaChartProps {
+  data: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      backgroundColor: string;
+      borderColor: string;
+      fill: boolean;
+      tension?: number;
+    }[];
+  };
+  options?: any;
+  title?: string;
+}
+
+const AreaChart: React.FC<AreaChartProps> = ({ data, options, title }) => {
+  const defaultOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+        labels: {
+          color: '#374151',
+          font: {
+            family: 'Inter, sans-serif',
+            size: 12
+          },
+          usePointStyle: true,
+          pointStyle: 'circle'
+        }
+      },
+      title: {
+        display: !!title,
+        text: title,
+        color: '#1F2937',
+        font: {
+          family: 'Inter, sans-serif',
+          size: 16,
+          weight: 'bold'
+        }
+      },
+      tooltip: {
+        backgroundColor: '#1F2937',
+        titleColor: '#F9FAFB',
+        bodyColor: '#F9FAFB',
+        borderColor: '#46166B',
+        borderWidth: 1,
+        cornerRadius: 8,
+        titleFont: {
+          family: 'Inter, sans-serif'
+        },
+        bodyFont: {
+          family: 'Inter, sans-serif'
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          color: '#E5E7EB',
+          drawBorder: false
+        },
+        ticks: {
+          color: '#6B7280',
+          font: {
+            family: 'Inter, sans-serif',
+            size: 11
+          }
+        }
+      },
+      y: {
+        grid: {
+          color: '#E5E7EB',
+          drawBorder: false
+        },
+        ticks: {
+          color: '#6B7280',
+          font: {
+            family: 'Inter, sans-serif',
+            size: 11
+          }
+        },
+        beginAtZero: true
+      }
+    },
+    elements: {
+      point: {
+        radius: 4,
+        hoverRadius: 6
+      },
+      line: {
+        tension: 0.4
+      }
+    },
+    ...options
+  };
+
+  return <Line data={data} options={defaultOptions} />;
+};
+
+export default AreaChart;

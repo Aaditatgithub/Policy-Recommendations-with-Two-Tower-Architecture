@@ -21,10 +21,22 @@ const iconMap = {
   signup: <FiUser className="text-orange-500" />
 };
 
+// Update the component to filter out anonymous entries
+
 export const RecentActivity = ({ activities = [] }: RecentActivityProps) => {
+  // Filter out anonymous activities
+  const filteredActivities = activities.filter(activity => 
+    activity.customer && 
+    activity.customer !== 'anonymous' && 
+    activity.customer !== 'Anonymous' &&
+    activity.policy && 
+    activity.policy !== 'anonymous' && 
+    activity.policy !== 'Anonymous'
+  );
+
   return (
     <div className="space-y-4">
-      {activities.map((activity) => (
+      {filteredActivities.map((activity) => (
         <div key={activity.id} className="flex items-start pb-4 border-b border-gray-100">
           <div className="p-2 rounded-full bg-gray-50 mr-3">
             {iconMap[activity.type]}
@@ -43,7 +55,7 @@ export const RecentActivity = ({ activities = [] }: RecentActivityProps) => {
           </div>
         </div>
       ))}
-      {activities.length === 0 && (
+      {filteredActivities.length === 0 && (
         <p className="text-center py-4 text-gray-500">No recent activity</p>
       )}
     </div>

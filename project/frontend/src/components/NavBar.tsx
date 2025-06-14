@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { trackEvent } from '../utils/tracking';
@@ -60,6 +59,13 @@ const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => trackEvent('nav_dashboard_click')}
                 >
                   Dashboard
+                </Link>
+                <Link 
+                  to="/promotion" 
+                  className="hover:bg-violet-700 px-3 py-2 rounded"
+                  onClick={() => trackEvent('nav_promotion_click')}
+                >
+                  Promotions
                 </Link>
                 <Link 
                   to="/policies" 

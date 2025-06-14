@@ -1,4 +1,4 @@
-﻿policy_id,policy_name,policy_type,sum_assured,premium_amount,policy_duration_years,risk_category,customer_target_group,description,keywords
+﻿policy_id,policy_name,policy_type,sum_assured (INR),premium_amount (INR),policy_duration_years,risk_category,customer_target_group,description,keywords
 1,SBI Life - eShield Next,Term,"50,00,000","3,600",30,Low,Young Professionals,A pure term plan offering financial protection with multiple plan options and additional rider benefits.,"term, protection, rider, financial security"
 2,SBI Life - Smart Scholar Plus,Child Plan,"10,00,000","50,000",20,Medium,Parents,A unit-linked insurance plan designed to secure your child's future with market-linked returns and insurance coverage.,"child plan, ULIP, education, future planning"
 3,SBI Life - Retire Smart Plus,Retirement,"20,00,000","30,000",25,Medium,Pre-Retirees,A unit-linked pension plan that helps build a retirement corpus through market-linked returns with flexibility and loyalty additions.,"retirement, pension, ULIP, corpus building"
